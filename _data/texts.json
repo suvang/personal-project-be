@@ -1,0 +1,63 @@
+[
+  {
+    "categoryType": "text",
+    "Image": "https://casperblog.imgix.net/blog/wp-content/uploads/2020/10/books-1200x880-1.png?auto=format",
+    "StoryName": "My story one",
+    "NoOfLikes": "200",
+    "totalChapters": "3",
+    "tags": ["funny", "humour", "laugh"],
+    "chapters": [
+      {
+        "chapterNumber": "1",
+        "TotalImages": 3,
+        "SubImages": [
+          "https://www.teahub.io/photos/full/238-2387126_minion-4k-toys-minions-despicable-me-3d-animation.jpg",
+          "https://www.teahub.io/photos/full/9-97439_one-eye-cartoon-character.jpg",
+          "https://wallpaperhook.com/wp-content/uploads/2020/11/Minions-Wallpapers-31-From-WallpaperHook.com-For-Free.jpg"
+        ],
+        "name": "Sub First Image",
+        "Description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
+      },
+      {
+        "chapterNumber": "2",
+        "TotalImages": 2,
+        "SubImages": [
+          "https://www.incimages.com/uploaded_files/image/1920x1080/getty_655998316_2000149920009280219_363765.jpg",
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Open_book_nae_02.svg/1200px-Open_book_nae_02.svg.png"
+        ],
+        "name": "Sub second Image",
+        "Description": "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old."
+      },
+      {
+        "chapterNumber": "3",
+        "TotalImages": 4,
+        "SubImages": [
+          "https://foodtank.com/wp-content/uploads/2021/07/alfons-morales-YLSwjSy7stw-unsplash.jpg",
+          "https://www.epw.in/system/files/book%20rev.png",
+          "https://www.asme.org/getmedia/c2c8ea5a-b690-4ba7-92bb-34bd1432862b/book_guide_hero_books.png?width=300&height=315&ext=.png",
+          "https://cbsnews3.cbsistatic.com/hub/i/r/2015/12/11/7f3c9843-adb1-4022-be13-82515641a9fc/thumbnail/1200x630/5af2e16fd2ecd02f06637db5ca110a43/open-book.jpg"
+        ],
+        "name": "Sub third Image",
+        "Description": "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable."
+      },
+      {
+        "chapterNumber": "4",
+        "TotalImages": 1,
+        "SubImages": [
+          "https://media.smallbiztrends.com/2020/11/Best-marketing-books.png"
+        ],
+        "name": "Sub fourth Image",
+        "Description": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
+      },
+      {
+        "chapterNumber": "5",
+        "TotalImages": 2,
+        "SubImages": [
+          "https://static.scientificamerican.com/sciam/cache/file/1DDFE633-2B85-468D-B28D05ADAE7D1AD8_source.jpg?w=590&h=800&D80F3D79-4382-49FA-BE4B4D0C62A5C3ED",
+          "https://48b6yd3iigex2rv7g41h5sts-wpengine.netdna-ssl.com/wp-content/uploads/2019/09/memoir-definition.jpg"
+        ],
+        "name": "Sub fifth Image"
+      }
+    ]
+  }
+]
