@@ -16,40 +16,6 @@ const AllCategoriesSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  likes: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
-
-  comments: [
-    {
-      writer: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-      writerName: {
-        type: String,
-        required: true,
-      },
-      comment: {
-        type: String,
-        required: true,
-      },
-      // responseTo: {
-      //   type: mongoose.Schema.Types.ObjectId,
-      //   ref: "User",
-      // },
-      parentId: {
-        type: mongoose.Schema.Types.ObjectId,
-      },
-      createdAt: {
-        type: Date,
-        default: Date.now,
-      },
-    },
-  ],
 
   slug: String,
 

@@ -46,24 +46,15 @@ const upload = multer({
 
 const type = upload.any();
 
-router.route("/followingposts").get(isAuthenticated, getPostOfFollowing);
-
 router
   .route("/")
   .get(getAllCategories)
   .post(isAuthenticated, type, addCategory);
 
 router
-  .route("/comment/:id")
-  .post(isAuthenticated, addComment)
-  .put(isAuthenticated, updateComment);
-
-router
   .route("/:id")
   .get(getCategory)
   .put(updateCategory)
   .delete(isAuthenticated, deleteCategory);
-
-router.route("/likeorunlikepost/:id").get(isAuthenticated, likeAndUnlikePost);
 
 module.exports = router;

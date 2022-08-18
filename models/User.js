@@ -20,14 +20,6 @@ const UserSchema = new mongoose.Schema({
   about: {
     type: String,
   },
-  posts: [{ type: mongoose.Schema.Types.ObjectId, refPath: "onModel" }],
-  followers: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
-  following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   savedStories: [{ type: mongoose.Schema.Types.ObjectId, refPath: "onModel" }],
   highlightedStories: [
     { type: mongoose.Schema.Types.ObjectId, refPath: "onModel" },

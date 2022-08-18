@@ -34,6 +34,4 @@ router.route("/logout").get(logout);
 
 router.route("/deleteprofile").delete(isAuthenticated, deleteMyProfile);
 
-router.route("/follow/:id").get(isAuthenticated, followUser);
-
 module.exports = router;
