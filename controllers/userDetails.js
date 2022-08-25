@@ -1,7 +1,6 @@
 const asyncHandler = require("../middleware/async");
 const fetchUserIdNumber = require("../middleware/fetchUserIdNumber");
 const User = require("../models/User");
-const Post = require("../models/Allcategories");
 
 //get all users
 exports.getAllUsers = asyncHandler(async (req, res, next) => {
@@ -31,10 +30,6 @@ exports.getAllUsers = asyncHandler(async (req, res, next) => {
 exports.getUser = asyncHandler(async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id)
-      .populate({
-        path: "posts",
-        model: "AllCategories",
-      })
       .populate({ path: "highlightedStories", model: "AllCategories" })
       .populate({ path: "savedStories", model: "AllCategories" });
 
@@ -43,34 +38,6 @@ exports.getUser = asyncHandler(async (req, res, next) => {
       user,
     });
   } catch (error) {
-    res.json({ status: "error", error: "invalid token" });
-  }
-});
-
-//get single user
-exports.getAnyUserProfile = asyncHandler(async (req, res, next) => {
-  try {
-    const user = await User.findById(req.params.id)
-      .populate({
-        path: "posts",
-        model: "AllCategories",
-      })
-      .populate({ path: "highlightedStories", model: "AllCategories" })
-      .populate({ path: "savedStories", model: "AllCategories" });
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      user,
-    });
-  } catch (error) {
-    console.log(error);
     res.json({ status: "error", error: "invalid token" });
   }
 });
@@ -216,10 +183,6 @@ exports.logout = asyncHandler(async (req, res) => {
 exports.deleteMyProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    const posts = user.posts;
-    const followers = user.followers;
-    const following = user.following;
-    const userId = user._id;
 
     await user.remove();
 
@@ -228,30 +191,6 @@ exports.deleteMyProfile = async (req, res) => {
       expires: new Date(Date.now()),
       httpOnly: true,
     });
-
-    //Deleting all posts of the user
-    for (let i = 0; i < posts.length; i++) {
-      const post = await Post.findById(posts[i]);
-      await post.remove();
-    }
-
-    // Removing User from Followers Following
-    for (let i = 0; i < followers.length; i++) {
-      const follower = await User.findById(followers[i]);
-
-      const index = follower.following.indexOf(userId);
-      follower.following.splice(index, 1);
-      await follower.save();
-    }
-
-    // Removing User from Followings Followers
-    for (let i = 0; i < following.length; i++) {
-      const follows = await User.findById(following[i]);
-
-      const index = follows.followers.indexOf(userId);
-      follows.followers.splice(index, 1);
-      await follows.save();
-    }
 
     res.status(200).json({
       success: true,

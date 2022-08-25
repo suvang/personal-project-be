@@ -19,7 +19,7 @@ const AllCategoriesSchema = new mongoose.Schema({
 
   slug: String,
 
-  storyName: {
+  topicName: {
     type: String,
     required: true,
   },
@@ -30,7 +30,7 @@ const AllCategoriesSchema = new mongoose.Schema({
     required: true,
   },
 
-  storyTags: {
+  tags: {
     type: [String],
     required: true,
   },

@@ -5,12 +5,9 @@ const {
   registerUser,
   loginUser,
   updateUser,
-  followUser,
   logout,
   deleteMyProfile,
-  getAnyUserProfile,
 } = require("../controllers/userDetails");
-const decodedToken = require("../middleware/tokenVerification");
 const router = express.Router();
 const multer = require("multer");
 const { isAuthenticated } = require("../middleware/auth");
@@ -21,8 +18,6 @@ const type = upload.none();
 router.route("/getallusers").get(getAllUsers);
 
 router.route("/currentuser").get(isAuthenticated, getUser);
-
-router.route("/user/:id").get(isAuthenticated, getAnyUserProfile);
 
 router.route("/register").post(type, registerUser);
 

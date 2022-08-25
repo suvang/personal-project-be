@@ -49,7 +49,7 @@ exports.getAllCategories = asyncHandler(async (req, res, next) => {
 
   //pagination
   const page = parseInt(req.query.page, 10) || 1;
-  const limit = parseInt(req.query.limit, 10) || 2;
+  const limit = parseInt(req.query.limit, 10) || 10;
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
   const total = await Category.countDocuments();
@@ -96,7 +96,7 @@ exports.addCategory = asyncHandler(async (req, res, next) => {
       Math.random().toString(36).slice(2)
     ),
     id: await fetchIdNumber(),
-    image: req.files[0].path,
+    image: req?.files[0]?.path,
     totalChapters: requestBody.chapters.length,
     owner: req.user._id,
   });

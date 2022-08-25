@@ -5,10 +5,6 @@ const {
   getCategory,
   updateCategory,
   deleteCategory,
-  likeAndUnlikePost,
-  getPostOfFollowing,
-  addComment,
-  updateComment,
 } = require("../controllers/allCategories");
 const { isAuthenticated } = require("../middleware/auth");
 const multer = require("multer");
