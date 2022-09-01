@@ -11,7 +11,7 @@ exports.getAllUsers = asyncHandler(async (req, res, next) => {
         model: "AllCategories",
       })
       .populate({ path: "highlightedStories", model: "AllCategories" })
-      .populate({ path: "savedStories", model: "AllCategories" });
+      .populate({ path: "savedPosts", model: "AllCategories" });
 
     res.status(200).json({
       success: true,
@@ -30,8 +30,8 @@ exports.getAllUsers = asyncHandler(async (req, res, next) => {
 exports.getUser = asyncHandler(async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id)
-      .populate({ path: "highlightedStories", model: "AllCategories" })
-      .populate({ path: "savedStories", model: "AllCategories" });
+      .populate({ path: "highlightedStories", model: "Channel" })
+      .populate({ path: "savedPosts", model: "Channel" });
 
     res.status(200).json({
       success: true,

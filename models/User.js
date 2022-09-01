@@ -20,13 +20,13 @@ const UserSchema = new mongoose.Schema({
   about: {
     type: String,
   },
-  savedStories: [{ type: mongoose.Schema.Types.ObjectId, refPath: "onModel" }],
+  savedPosts: [{ type: mongoose.Schema.Types.ObjectId, refPath: "onModel" }],
   highlightedStories: [
     { type: mongoose.Schema.Types.ObjectId, refPath: "onModel" },
   ],
   onModel: {
     type: String,
-    enum: ["AllCategories"],
+    enum: ["Channel", "AllCategories"],
   },
   password: {
     type: String,

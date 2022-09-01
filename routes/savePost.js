@@ -1,8 +1,8 @@
 const express = require("express");
 const { isAuthenticated } = require("../middleware/auth");
-const { saveStory } = require("../controllers/saveStory");
+const { savePost } = require("../controllers/savePost");
 const router = express.Router();
 
-router.route("/").post(isAuthenticated, saveStory);
+router.route("/").post(isAuthenticated, savePost);
 
 module.exports = router;

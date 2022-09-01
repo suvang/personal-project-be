@@ -17,7 +17,7 @@ connectDB();
 const allCategories = require("./routes/allCategories");
 const userDetails = require("./routes/userDetails");
 const highlightStory = require("./routes/highlightStory");
-const saveStory = require("./routes/saveStory");
+const savePost = require("./routes/savePost");
 const channelData = require("./routes/channelData");
 const corsOptions = {
   origin: true, //included origin as true
@@ -41,7 +41,7 @@ if (process.env.NODE_ENV === "development") {
 app.use("/api/v1/allcategories", allCategories);
 app.use("/api/v1/userdetails", userDetails);
 app.use("/api/v1/highlightstory", highlightStory);
-app.use("/api/v1/savestory", saveStory);
+app.use("/api/v1/savepost", savePost);
 app.use("/api/v1/channeldata", channelData);
 
 app.use(errorHandler);

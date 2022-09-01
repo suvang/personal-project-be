@@ -6,11 +6,13 @@ const ChannelSchema = new mongoose.Schema({
   channelId: String,
   title: String,
   description: String,
+  deepDescription: String,
   channelTitle: String,
   playlistId: String,
   videoId: String,
   thumbnails: Object,
   videoUrl: String,
+  duration: String,
   question: { type: mongoose.Schema.Types.ObjectId, ref: "Question" },
   createdAt: {
     type: Date,
