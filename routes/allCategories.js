@@ -45,12 +45,9 @@ const type = upload.any();
 router
   .route("/")
   .get(getAllCategories)
-  .post(isAuthenticated, type, addCategory);
+  .post(isAuthenticated, type, addCategory)
+  .put(updateCategory);
 
-router
-  .route("/:id")
-  .get(getCategory)
-  .put(updateCategory)
-  .delete(isAuthenticated, deleteCategory);
+router.route("/:id").get(getCategory).delete(isAuthenticated, deleteCategory);
 
 module.exports = router;

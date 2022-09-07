@@ -8,6 +8,7 @@ const {
 const router = express.Router();
 
 router.route("/").post(addChannelData).get(getChannelsData);
+
 router.route("/").put(updateChannelData);
 
 router.route("/all").put(updateAllChannelData);

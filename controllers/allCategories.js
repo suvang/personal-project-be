@@ -165,18 +165,20 @@ exports.getCategory = asyncHandler(async (req, res, next) => {
 //route PUT /api/v1/allcategories/:id
 //access private
 exports.updateCategory = asyncHandler(async (req, res, next) => {
-  await Category.findOneAndUpdate({ id: req.params.id }, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  // await Category.findOneAndUpdate({ _id: req.params.id }, req.body, {
+  //   new: true,
+  //   runValidators: true,
+  // });
 
-  // if (!category) {
-  //   return next(
-  //     new ErrorResponse(`Category not found with id of ${req.params.id}`, 404)
-  //   );
-  // }
+  const { id } = req.query;
 
-  // res.status(200).json({ success: true, data: category });
+  const category = await Category.findById(id);
+  const reqBodyKey = Object.keys(req.body)[0];
+  const items = reqBodyKey.split(".");
+  category[items[0]][Number(items[1])][items[2]] = req.body[reqBodyKey];
+  category.save();
+
+  res.status(200).json({ success: true, data: category });
 });
 
 //desc Delete a category

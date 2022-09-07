@@ -3,7 +3,7 @@ const { google } = require("googleapis");
 const { default: axios } = require("axios");
 const channelModel = require("../models/Channel");
 const questionModel = require("../models/Question");
-const questiondata = require("../_data/questionsData.json");
+const { pagination } = require("../middleware/pagination");
 //youtube config
 const apiKey = "AIzaSyAzDClJ05OqsIU-EsTZhaG6BoEaCjeojCM";
 const youtube = google.youtube({
@@ -79,21 +79,10 @@ exports.addChannelData = asyncHandler(async (req, res, next) => {
 
 exports.getChannelsData = asyncHandler(async (req, res, next) => {
   try {
-    let videoData;
-    const { id } = req.query;
+    let videoData = await pagination(req, res, next, channelModel);
 
-    if (id) {
-      videoData = await channelModel.find({ id }).populate("question");
-      res.status(201).json({ success: true, data: videoData[0] });
-      return;
-    } else {
-      videoData = await channelModel.find({}).populate("question");
-      res.status(201).json({ success: true, data: videoData });
-      return;
-    }
+    res.status(200).json(videoData);
 
-    // await questionModel.create(questiondata);
-    // console.log("videos", videos);
     //delete all
     // await channelModel.deleteMany({}, () => {});
   } catch (err) {
