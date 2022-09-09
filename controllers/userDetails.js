@@ -1,6 +1,8 @@
 const asyncHandler = require("../middleware/async");
 const fetchUserIdNumber = require("../middleware/fetchUserIdNumber");
 const User = require("../models/User");
+const channelModel = require("../models/Channel");
+const Category = require("../models/Allcategories");
 
 //get all users
 exports.getAllUsers = asyncHandler(async (req, res, next) => {
@@ -29,13 +31,30 @@ exports.getAllUsers = asyncHandler(async (req, res, next) => {
 //get single user
 exports.getUser = asyncHandler(async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id)
-      .populate({ path: "highlightedStories", model: "Channel" })
-      .populate({ path: "savedPosts", model: "Channel" });
+    const user = await User.findById(req.user._id);
+
+    let finaluser = { ...user._doc };
+
+    let tempSavedPosts = [];
+
+    let savedPosts = finaluser.savedPosts;
+    for (let i = 0; i < savedPosts.length; i++) {
+      if (savedPosts[i].categoryType === "video") {
+        const post = await channelModel.findById(savedPosts[i].id);
+        tempSavedPosts.push(post);
+      }
+
+      if (savedPosts[i].categoryType === "image") {
+        const post = await Category.findById(savedPosts[i].id);
+        tempSavedPosts.push(post);
+      }
+    }
+
+    const result = { ...finaluser, savedPosts: tempSavedPosts };
 
     res.status(200).json({
       success: true,
-      user,
+      user: result,
     });
   } catch (error) {
     res.json({ status: "error", error: "invalid token" });

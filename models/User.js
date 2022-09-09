@@ -20,7 +20,8 @@ const UserSchema = new mongoose.Schema({
   about: {
     type: String,
   },
-  savedPosts: [{ type: mongoose.Schema.Types.ObjectId, refPath: "onModel" }],
+  // savedPosts: [{ type: mongoose.Schema.Types.ObjectId, refPath: "onModel" }],
+  savedPosts: [{ id: String, categoryType: String }],
   highlightedStories: [
     { type: mongoose.Schema.Types.ObjectId, refPath: "onModel" },
   ],

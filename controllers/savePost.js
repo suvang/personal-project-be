@@ -6,11 +6,17 @@ const User = require("../models/User");
 //route   POST /api/v1/addHighlightedStory
 //access  private
 exports.savePost = asyncHandler(async (req, res, next) => {
-  const { postId } = req.query;
+  const { postId, type } = req.query;
   let user = await User.findById(req.user._id);
 
   try {
-    user.savedPosts.push(postId);
+    const post = {
+      id: postId,
+      categoryType: type,
+    };
+
+    console.log("post", post);
+    user.savedPosts.push(post);
     await user.save();
     res.status(201).json({ success: true, data: user });
   } catch (err) {
