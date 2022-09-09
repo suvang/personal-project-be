@@ -3,85 +3,21 @@ const asyncHandler = require("../middleware/async");
 const Category = require("../models/Allcategories");
 const fetchIdNumber = require("../middleware/fetchIdNumber");
 const User = require("../models/User");
+const { pagination } = require("../middleware/pagination");
 
 //desc    get all categories
 //route   GET /api/v1/allcategories
 //access  public
 exports.getAllCategories = asyncHandler(async (req, res, next) => {
-  let query;
-
-  //copy req.query
-  const reqQuery = { ...req.query };
-
-  //fields to exclude
-  const removeFields = ["select", "sort", "page", "limit"];
-
-  //loop over removeFields and delete the reqQuery
-  removeFields.forEach((param) => delete reqQuery[param]);
-
-  console.log("reqQuery", reqQuery);
-
-  // create query string
-  let queryStr = JSON.stringify(reqQuery);
-
-  //create operators ($gt, $gte, etc)
-  queryStr = queryStr.replace(
-    /\b(gt|gte|lt|lte|in)\b/g,
-    (match) => `$${match}`
+  let category = await pagination(
+    req,
+    res,
+    next,
+    Category,
+    (type = "allcategory")
   );
 
-  //Finding resource
-  query = Category.find(JSON.parse(queryStr));
-
-  //select fields
-  if (req.query.select) {
-    const fields = req.query.select.split(",").join(" ");
-    query = query.select(fields);
-  }
-
-  //sort
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(",").join(" ");
-    query = query.sort(sortBy);
-  } else {
-    query = query.sort("-createdAt");
-  }
-
-  //pagination
-  const page = parseInt(req.query.page, 10) || 1;
-  const limit = parseInt(req.query.limit, 10) || 10;
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  const total = await Category.countDocuments();
-
-  query = query.skip(startIndex).limit(limit);
-
-  //executing query
-  const category = await query;
-
-  //pagination result
-  const pagination = {};
-
-  if (endIndex < total) {
-    pagination.next = {
-      page: page + 1,
-      limit,
-    };
-  }
-
-  if (startIndex > 0) {
-    pagination.prev = {
-      page: page - 1,
-      limit,
-    };
-  }
-
-  res.status(200).json({
-    success: true,
-    count: category.length,
-    pagination: pagination,
-    data: category,
-  });
+  res.status(200).json(category);
 });
 
 //desc    add to all categories

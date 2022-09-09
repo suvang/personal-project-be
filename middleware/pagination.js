@@ -1,4 +1,4 @@
-exports.pagination = async (req, res, next, model) => {
+exports.pagination = async (req, res, next, model, type = null) => {
   let query;
 
   //copy req.query
@@ -25,9 +25,18 @@ exports.pagination = async (req, res, next, model) => {
     tempQuery.title = { $regex: `${tempQuery.title}`, $options: "i" };
   }
 
+  if (tempQuery.topicName) {
+    tempQuery.topicName = { $regex: `${tempQuery.topicName}`, $options: "i" };
+  }
+
   //Finding resource
   // query = model.find(JSON.parse(queryStr)).populate("question");
-  query = model.find(tempQuery).populate("question");
+
+  if (type === "allcategory") {
+    query = model.find(tempQuery);
+  } else {
+    query = model.find(tempQuery).populate("question");
+  }
 
   //select fields
   if (req.query.select) {
