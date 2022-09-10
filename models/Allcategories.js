@@ -34,7 +34,10 @@ const AllCategoriesSchema = new mongoose.Schema({
     type: [String],
     required: true,
   },
-
+  saved: {
+    type: Boolean,
+    default: false,
+  },
   chapters: [
     {
       chapterNumber: Number,

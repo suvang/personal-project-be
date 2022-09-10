@@ -13,6 +13,10 @@ const ChannelSchema = new mongoose.Schema({
   thumbnails: Object,
   videoUrl: String,
   duration: String,
+  saved: {
+    type: Boolean,
+    default: false,
+  },
   question: { type: mongoose.Schema.Types.ObjectId, ref: "Question" },
   createdAt: {
     type: Date,
