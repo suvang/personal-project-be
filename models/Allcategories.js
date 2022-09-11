@@ -50,6 +50,7 @@ const AllCategoriesSchema = new mongoose.Schema({
       chapterDescription: String,
     },
   ],
+  popular: Boolean,
   createdAt: {
     type: Date,
     default: Date.now,

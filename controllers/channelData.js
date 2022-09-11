@@ -121,23 +121,37 @@ exports.updateAllChannelData = asyncHandler(async (req, res, next) => {
   try {
     const videos = await channelModel.find({});
 
-    let videoIdSet = new Set();
-
-    videos.forEach((video) => videoIdSet.add(video.videoId));
-
-    const videoIds = [...videoIdSet];
-    const videoContentDetails = await axios.get(
-      `https://www.googleapis.com/youtube/v3/videos?id=${videoIds}&part=contentDetails&key=${apiKey}`
-    );
-
     videos.forEach(async (video) => {
-      const vid = await channelModel.findOne({ id: video.id });
-      vid.duration = videoContentDetails.data.items.find(
-        (content) => content.id === vid.videoId
-      ).contentDetails.duration;
+      if (
+        video.title.toLowerCase().includes("javascript") &&
+        !video.title.toLowerCase().includes("react")
+      ) {
+        video.language = {
+          name: "JavaScript",
+          color: "#ffe83b",
+        };
 
-      await vid.save();
+        await video.save();
+      }
     });
+
+    // let videoIdSet = new Set();
+
+    // videos.forEach((video) => videoIdSet.add(video.videoId));
+
+    // const videoIds = [...videoIdSet];
+    // const videoContentDetails = await axios.get(
+    //   `https://www.googleapis.com/youtube/v3/videos?id=${videoIds}&part=contentDetails&key=${apiKey}`
+    // );
+
+    // videos.forEach(async (video) => {
+    //   const vid = await channelModel.findOne({ id: video.id });
+    //   vid.duration = videoContentDetails.data.items.find(
+    //     (content) => content.id === vid.videoId
+    //   ).contentDetails.duration;
+
+    //   await vid.save();
+    // });
 
     res.status(201).json({ success: true, data: videos });
   } catch (err) {

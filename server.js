@@ -19,6 +19,7 @@ const userDetails = require("./routes/userDetails");
 const highlightStory = require("./routes/highlightStory");
 const savePost = require("./routes/savePost");
 const channelData = require("./routes/channelData");
+const popular = require("./routes/popular");
 const corsOptions = {
   origin: true, //included origin as true
   credentials: true, //included credentials as true
@@ -43,6 +44,7 @@ app.use("/api/v1/userdetails", userDetails);
 app.use("/api/v1/highlightstory", highlightStory);
 app.use("/api/v1/savepost", savePost);
 app.use("/api/v1/channeldata", channelData);
+app.use("/api/v1/popular", popular);
 
 app.use(errorHandler);
 

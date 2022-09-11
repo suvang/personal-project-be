@@ -4,6 +4,8 @@ exports.pagination = async (req, res, next, model, type = null) => {
   //copy req.query
   const reqQuery = { ...req.query };
 
+  console.log();
+
   //fields to exclude
   const removeFields = ["select", "sort", "page", "limit"];
 
@@ -32,7 +34,35 @@ exports.pagination = async (req, res, next, model, type = null) => {
   //Finding resource
   // query = model.find(JSON.parse(queryStr)).populate("question");
 
-  if (type === "allcategory") {
+  if (type === "popular") {
+    if (tempQuery.popularType) {
+      tempQuery.topicName = {
+        $regex: `${tempQuery.popularType}`,
+        $options: "i",
+      };
+    }
+
+    tempQuery.popular = true;
+
+    let category = await model[0].find(tempQuery);
+
+    delete tempQuery.topicName;
+
+    if (tempQuery.popularType) {
+      tempQuery.title = {
+        $regex: `${tempQuery.popularType}`,
+        $options: "i",
+      };
+    }
+
+    tempQuery.popular = true;
+
+    let videos = await model[1].find(tempQuery);
+
+    delete tempQuery.title;
+
+    query = [...category, ...videos];
+  } else if (type === "allcategory") {
     query = model.find(tempQuery);
   } else {
     query = model.find(tempQuery).populate("question");
@@ -49,7 +79,11 @@ exports.pagination = async (req, res, next, model, type = null) => {
     const sortBy = req.query.sort.split(",").join(" ");
     query = query.sort(sortBy);
   } else {
-    query = query.sort({ createdAt: 1 });
+    if (type === "popular") {
+      query.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1));
+    } else {
+      query = query.sort({ createdAt: 1 });
+    }
   }
 
   //pagination
@@ -57,9 +91,19 @@ exports.pagination = async (req, res, next, model, type = null) => {
   const limit = parseInt(req.query.limit, 10) || 10;
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
-  const total = await model.countDocuments();
+  let total;
 
-  query = query.skip(startIndex).limit(limit);
+  if (type === "popular") {
+    total = query.length;
+  } else {
+    total = await model.countDocuments();
+  }
+
+  if (type === "popular") {
+    query = query.slice(startIndex, startIndex + limit);
+  } else {
+    query = query.skip(startIndex).limit(limit);
+  }
 
   //executing query
   const data = await query;
