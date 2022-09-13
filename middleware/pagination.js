@@ -31,6 +31,11 @@ exports.pagination = async (req, res, next, model, type = null) => {
     tempQuery.topicName = { $regex: `${tempQuery.topicName}`, $options: "i" };
   }
 
+  if (tempQuery.filter) {
+    tempQuery.tags = tempQuery.filter;
+    delete tempQuery.filter;
+  }
+
   //Finding resource
   // query = model.find(JSON.parse(queryStr)).populate("question");
 
