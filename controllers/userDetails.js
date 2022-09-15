@@ -5,7 +5,7 @@ const channelModel = require("../models/Channel");
 const Category = require("../models/Allcategories");
 const getUserWithPosts = require("../middleware/getUserWithPosts");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
+const sendMail = require("../middleware/sendMail");
 
 //get all users
 exports.getAllUsers = asyncHandler(async (req, res, next) => {
@@ -103,6 +103,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
       email,
       password,
       id: await fetchUserIdNumber(),
+      emailVerified: false,
     });
 
     const token = await user.generateToken();
@@ -111,6 +112,16 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
       expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
       httpOnly: true,
     };
+
+    const payload = {
+      email: user.email,
+      id: user._id,
+    };
+
+    const emailToken = jwt.sign(payload, "secret123", { expiresIn: "15m" });
+    const link = `http://localhost:3000/stories/popular?id=${user._id}&token=${emailToken}`;
+
+    sendMail(user, link);
 
     res.status(201).cookie("token", token, options).json({
       success: true,
@@ -124,6 +135,47 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     });
   }
 });
+
+exports.verifyEmail = async (req, res) => {
+  try {
+    const { id, token } = req.query;
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      res.status(201).json({
+        success: false,
+        message: "Invalid user id",
+      });
+      return;
+    }
+
+    if (user.emailVerified) {
+      return res.status(200).json({
+        success: true,
+        message: "Your email has already been verified.",
+        emailVerified: true,
+      });
+    }
+
+    jwt.verify(token, "secret123");
+
+    user.emailVerified = true;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Your email is verified",
+      emailVerified: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      emailVerified: false,
+    });
+  }
+};
 
 //login user
 exports.loginUser = asyncHandler(async (req, res, next) => {
@@ -223,41 +275,15 @@ exports.forgotPassword = async (req, res) => {
       return;
     }
 
-    const secret = "secret123" + user.password;
     const payload = {
       email: user.email,
       id: user._id,
     };
 
-    const token = jwt.sign(payload, secret, { expiresIn: "15m" });
+    const token = jwt.sign(payload, "secret123", { expiresIn: "15m" });
     const link = `http://localhost:3000/reset-password?id=${user._id}&token=${token}`;
 
-    const log = console.log;
-
-    // Step 1
-    let transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-        user: process.env.EMAIL, // TODO: your gmail account
-        pass: process.env.PASSWORD, // TODO: your gmail password
-      },
-    });
-
-    // Step 2
-    let mailOptions = {
-      from: "xplodivity.mail@gmail.com", // TODO: email sender
-      to: `${user.email}`, // TODO: email receiver
-      subject: "Reset password",
-      text: `Click on the link to reset your password ${link}`,
-    };
-
-    // Step 3
-    transporter.sendMail(mailOptions, (err, data) => {
-      if (err) {
-        return log("Error occurs");
-      }
-      return log("Email sent!!!");
-    });
+    sendMail(user, link);
 
     user.resetPasswordLink = link;
     user.save();
@@ -299,9 +325,7 @@ exports.resetPassword = async (req, res) => {
       return;
     }
 
-    const secret = "secret123" + user.password;
-
-    jwt.verify(token, secret);
+    jwt.verify(token, "secret123");
 
     if (password) {
       user.password = password;
