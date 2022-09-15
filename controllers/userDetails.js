@@ -4,6 +4,8 @@ const User = require("../models/User");
 const channelModel = require("../models/Channel");
 const Category = require("../models/Allcategories");
 const getUserWithPosts = require("../middleware/getUserWithPosts");
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 
 //get all users
 exports.getAllUsers = asyncHandler(async (req, res, next) => {
@@ -203,6 +205,127 @@ exports.deleteMyProfile = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message,
+    });
+  }
+};
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      res.status(200).json({
+        success: false,
+        message: "user does not exist",
+        emailFound: false,
+      });
+      return;
+    }
+
+    const secret = "secret123" + user.password;
+    const payload = {
+      email: user.email,
+      id: user._id,
+    };
+
+    const token = jwt.sign(payload, secret, { expiresIn: "15m" });
+    const link = `http://localhost:3000/reset-password?id=${user._id}&token=${token}`;
+
+    const log = console.log;
+
+    // Step 1
+    let transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: process.env.EMAIL, // TODO: your gmail account
+        pass: process.env.PASSWORD, // TODO: your gmail password
+      },
+    });
+
+    // Step 2
+    let mailOptions = {
+      from: "xplodivity.mail@gmail.com", // TODO: email sender
+      to: `${user.email}`, // TODO: email receiver
+      subject: "Reset password",
+      text: `Click on the link to reset your password ${link}`,
+    };
+
+    // Step 3
+    transporter.sendMail(mailOptions, (err, data) => {
+      if (err) {
+        return log("Error occurs");
+      }
+      return log("Email sent!!!");
+    });
+
+    user.resetPasswordLink = link;
+    user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Password reset link has been sent to your email",
+      emailFound: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { id, token } = req.query;
+    const { password } = req.body;
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      res.status(201).json({
+        success: false,
+        message: "Invalid user id",
+      });
+      return;
+    }
+
+    if (!user.resetPasswordLink) {
+      res.status(201).json({
+        success: false,
+        message: "You have already reset your password using this link",
+        verified: false,
+      });
+      return;
+    }
+
+    const secret = "secret123" + user.password;
+
+    jwt.verify(token, secret);
+
+    if (password) {
+      user.password = password;
+      user.resetPasswordLink = null;
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        message: "password has been reset",
+        reset: true,
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "token verified to reset password",
+      verified: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      verified: false,
     });
   }
 };
