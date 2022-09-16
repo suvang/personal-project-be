@@ -10,6 +10,7 @@ const {
   forgotPassword,
   resetPassword,
   verifyEmail,
+  sendMailVerification,
 } = require("../controllers/userDetails");
 const router = express.Router();
 const multer = require("multer");
@@ -35,6 +36,10 @@ router.route("/forgot-password").post(forgotPassword);
 router.route("/verify-email").get(verifyEmail);
 
 router.route("/reset-password").get(resetPassword).post(resetPassword);
+
+router
+  .route("/resend-email-verification")
+  .get(isAuthenticated, sendMailVerification);
 
 router.route("/deleteprofile").delete(isAuthenticated, deleteMyProfile);
 

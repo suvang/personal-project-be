@@ -136,6 +136,42 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
   }
 });
 
+exports.sendMailVerification = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      res.status(201).json({
+        success: false,
+        message: "Invalid user id",
+      });
+      return;
+    }
+
+    const payload = {
+      email: user.email,
+      id: user._id,
+    };
+
+    const emailToken = jwt.sign(payload, "secret123", { expiresIn: "15m" });
+    const link = `http://localhost:3000/stories/popular?id=${user._id}&token=${emailToken}`;
+
+    sendMail(user, link);
+
+    res.status(200).json({
+      success: true,
+      message: "Verification email sent to verify email",
+      emailSent: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      emailVerified: false,
+    });
+  }
+};
+
 exports.verifyEmail = async (req, res) => {
   try {
     const { id, token } = req.query;
