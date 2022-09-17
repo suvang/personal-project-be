@@ -85,9 +85,10 @@ exports.pagination = async (req, res, next, model, type = null) => {
     query = query.sort(sortBy);
   } else {
     if (type === "popular") {
+      //because query when type is popular doesnt have reference to mongodb model, hence we have to perform a manual sort
       query.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1));
     } else {
-      query = query.sort({ createdAt: 1 });
+      query = query.sort({ createdAt: -1 });
     }
   }
 

@@ -16,60 +16,32 @@ const youtube = google.youtube({
 //access  public
 exports.addChannelData = asyncHandler(async (req, res, next) => {
   try {
-    const response = await youtube.channels.list({
-      part: "contentDetails",
-      id: "UCQ_TmFbOkCyIfknGonSXEVQ",
-    });
+    const { videoId, language, deepDescription, popular } = req.body;
 
-    const uploadId =
-      response.data.items[0].contentDetails.relatedPlaylists.uploads;
-
-    const data = await axios.get(
-      `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${uploadId}&key=${apiKey}&part=snippet&maxResults=50`
-    );
-
-    const channelData = data.data.items;
-
-    const videos = await channelModel.find({});
-
-    let set = new Set();
-
-    videos.forEach((video) => set.add(video.id));
-
-    let videoIdSet = new Set();
-
-    videos.forEach((video) => videoIdSet.add(video.videoId));
-
-    const videoIds = [...videoIdSet];
     const videoContentDetails = await axios.get(
-      `https://www.googleapis.com/youtube/v3/videos?id=${videoIds}&part=contentDetails&key=${apiKey}`
+      `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id=${videoId}&key=${apiKey}`
     );
 
-    // console.log("videoContentDetails", videoContentDetails.data.items);
+    const data = videoContentDetails.data.items[0];
+    const finalData = {
+      publishedAt: data.snippet.publishedAt,
+      channelId: data.snippet.channelId,
+      title: data.snippet.title,
+      description: data.snippet.description,
+      deepDescription,
+      channelTitle: data.snippet.channelTitle,
+      videoId: data.id,
+      categoryType: "video",
+      thumbnails: data.snippet.thumbnails,
+      language,
+      popular,
+      videoUrl: `https://www.youtube.com/watch?v=${data.id}`,
+      duration: data.contentDetails.duration,
+    };
 
-    const finalData = channelData.map((item) => {
-      return {
-        id: item.id,
-        publishedAt: item.snippet.publishedAt,
-        channelId: item.snippet.channelId,
-        title: item.snippet.title,
-        description: item.snippet.description,
-        channelTitle: item.snippet.channelTitle,
-        playlistId: item.snippet.playlistId,
-        videoId: item.snippet.resourceId.videoId,
-        thumbnails: item.snippet.thumbnails,
-        videoUrl: `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`,
-        duration: videoContentDetails.data.items.find(
-          (content) => content.id === item.snippet.resourceId.videoId
-        ).contentDetails.duration,
-      };
-    });
+    await channelModel.create(finalData);
 
-    for (let i = 0; i < finalData.length; i++) {
-      if (!set.has(finalData[i].id)) {
-        await channelModel.create(finalData[i]);
-      }
-    }
+    console.log("finalData", finalData);
 
     res.status(201).json({ success: true, data: finalData });
   } catch (err) {
@@ -79,8 +51,15 @@ exports.addChannelData = asyncHandler(async (req, res, next) => {
 
 exports.getChannelsData = asyncHandler(async (req, res, next) => {
   try {
-    let videoData = await pagination(req, res, next, channelModel);
+    const { id } = req.query;
+    let videoData;
+    if (id) {
+      videoData = await channelModel.findById(id);
+      res.status(200).json({ success: true, data: videoData });
+      return;
+    }
 
+    videoData = await pagination(req, res, next, channelModel);
     res.status(200).json(videoData);
 
     //delete all
