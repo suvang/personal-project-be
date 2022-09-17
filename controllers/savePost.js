@@ -22,8 +22,7 @@ exports.savePost = asyncHandler(async (req, res, next) => {
 
     if (isExist) {
       const index = user.savedPosts.findIndex(
-        (item) =>
-          item._id === post.id && item.categoryType === post.categoryType
+        (item) => item.id === post.id && item.categoryType === post.categoryType
       );
 
       user.savedPosts.splice(index, 1);
