@@ -76,7 +76,7 @@ exports.updateChannelData = asyncHandler(async (req, res, next) => {
     const { postContent } = req.body;
 
     console.log("postcontent", postContent);
-    const video = await channelModel.findOne({ id });
+    const video = await channelModel.findOne({ _id: id });
 
     if (question_id) {
       video.question = question_id;
