@@ -6,7 +6,6 @@ const AllCategoriesSchema = new mongoose.Schema({
   categoryType: {
     type: String,
     required: [true, "Please add a category"],
-    enum: ["audio", "image", "text"],
   },
   image: {
     type: String,
