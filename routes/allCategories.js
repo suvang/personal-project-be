@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
   },
 
   filename: function (req, file, cb) {
-    cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
+    cb(null, file.originalname);
   },
 });
 
@@ -38,6 +38,7 @@ const upload = multer({
     fileSize: 1024 * 1024 * 10,
     fileFilter: fileFilter,
   },
+  preservePath: true,
 });
 
 const type = upload.any();
