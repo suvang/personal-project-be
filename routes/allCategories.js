@@ -9,10 +9,18 @@ const {
 const { isAuthenticated } = require("../middleware/auth");
 const multer = require("multer");
 const router = express.Router();
+const fs = require("fs");
 
+const uniqueId = new Date().toISOString();
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads/");
+  destination: async function (req, file, cb) {
+    dir = `./uploads/${req.body.topicName}-${uniqueId}`;
+    if (!fs.existsSync(dir)) {
+      await fs.mkdirSync(dir);
+      cb(null, dir);
+      return;
+    }
+    cb(null, dir);
   },
 
   filename: function (req, file, cb) {
