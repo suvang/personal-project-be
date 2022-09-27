@@ -224,6 +224,7 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: "User does not exist",
+        userExist: false,
       });
     }
 
@@ -232,7 +233,8 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
     if (!isMatch) {
       return res.status(400).json({
         success: false,
-        message: "Incorrect password",
+        message: "incorrect password",
+        userExist: true,
       });
     }
 
