@@ -121,7 +121,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     const emailToken = jwt.sign(payload, "secret123", { expiresIn: "15m" });
     const link = `http://localhost:3000/stories/popular?id=${user._id}&token=${emailToken}`;
 
-    sendMail(user, link);
+    sendMail(user, link, "email");
 
     res.status(201).cookie("token", token, options).json({
       success: true,
@@ -156,7 +156,7 @@ exports.sendMailVerification = async (req, res) => {
     const emailToken = jwt.sign(payload, "secret123", { expiresIn: "15m" });
     const link = `http://localhost:3000/stories/popular?id=${user._id}&token=${emailToken}`;
 
-    sendMail(user, link);
+    sendMail(user, link, "email");
 
     res.status(200).json({
       success: true,
@@ -321,7 +321,7 @@ exports.forgotPassword = async (req, res) => {
     const token = jwt.sign(payload, "secret123", { expiresIn: "15m" });
     const link = `http://localhost:3000/reset-password?id=${user._id}&token=${token}`;
 
-    sendMail(user, link);
+    sendMail(user, link, "password");
 
     user.resetPasswordLink = link;
     user.save();
