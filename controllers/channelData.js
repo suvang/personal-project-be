@@ -16,13 +16,23 @@ const youtube = google.youtube({
 //access  public
 exports.addChannelData = asyncHandler(async (req, res, next) => {
   try {
-    const { videoId, language, deepDescription, popular } = req.body;
+    let { videoId, language, deepDescription, popular } = JSON.parse(
+      req.body.finalObj
+    );
 
     const videoContentDetails = await axios.get(
       `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id=${videoId}&key=${apiKey}`
     );
 
+    const descriptionImages = [];
+
+    for (let i in req.files) {
+      const getFieldName = parseInt(req.files[i].fieldname);
+      descriptionImages[getFieldName - 1] = req.files[i].path;
+    }
+
     const data = videoContentDetails.data.items[0];
+
     const finalData = {
       publishedAt: data.snippet.publishedAt,
       channelId: data.snippet.channelId,
@@ -35,13 +45,12 @@ exports.addChannelData = asyncHandler(async (req, res, next) => {
       thumbnails: data.snippet.thumbnails,
       language,
       popular,
+      descriptionImages,
       videoUrl: `https://www.youtube.com/watch?v=${data.id}`,
       duration: data.contentDetails.duration,
     };
 
     await channelModel.create(finalData);
-
-    console.log("finalData", finalData);
 
     res.status(201).json({ success: true, data: finalData });
   } catch (err) {

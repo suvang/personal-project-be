@@ -11,6 +11,9 @@ const ChannelSchema = new mongoose.Schema({
   thumbnails: Object,
   videoUrl: String,
   duration: String,
+  descriptionImages: {
+    type: [String],
+  },
   language: {
     name: String,
     color: String,

@@ -11,10 +11,9 @@ const multer = require("multer");
 const router = express.Router();
 const fs = require("fs");
 
-const uniqueId = new Date().toISOString();
 const storage = multer.diskStorage({
   destination: async function (req, file, cb) {
-    dir = `./uploads/${req.body.topicName}-${uniqueId}`;
+    dir = `./uploads/categories/${req.body.topicName}`;
     if (!fs.existsSync(dir)) {
       await fs.mkdirSync(dir);
       cb(null, dir);
