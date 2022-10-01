@@ -54,7 +54,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 
     if (requestBody.email) user.email = requestBody.email;
 
-    if (requestBody.username) user.username = requestBody.username;
+    if (requestBody.fullName) user.fullName = requestBody.fullName;
 
     if (requestBody.about) user.about = requestBody.about;
 
@@ -89,7 +89,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 //register user
 exports.registerUser = asyncHandler(async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
+    const { fullName, email, password } = req.body;
 
     let user = await User.findOne({ email });
     if (user) {
@@ -99,7 +99,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     }
 
     user = await User.create({
-      username,
+      fullName,
       email,
       password,
       id: await fetchUserIdNumber(),
