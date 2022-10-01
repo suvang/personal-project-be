@@ -50,22 +50,32 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 exports.updateUser = asyncHandler(async (req, res, next) => {
   try {
     let requestBody = { ...req.body };
+
+    if (!requestBody) {
+      res.status(400).json({
+        success: false,
+        message: "no data provided",
+      });
+    }
+
     let user = await User.findById(req.user._id).select("+password");
 
-    if (requestBody.email) user.email = requestBody.email;
+    // if (requestBody.email) user.email = requestBody.email;
 
     if (requestBody.fullName) user.fullName = requestBody.fullName;
 
-    if (requestBody.about) user.about = requestBody.about;
+    // if (requestBody.about) user.about = requestBody.about;
 
-    if (requestBody.newPassword) {
-      const { oldPassword, newPassword } = req.body;
-      const isMatch = await user.matchPassword(oldPassword);
+    if (requestBody.currentPassword && requestBody.newPassword) {
+      const { currentPassword, newPassword } = req.body;
+
+      const isMatch = await user.matchPassword(currentPassword);
 
       if (!isMatch) {
         return res.status(400).json({
           success: false,
           message: "Incorrect Old password",
+          isCurrentPasswordValid: false,
         });
       }
 
