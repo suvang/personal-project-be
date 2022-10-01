@@ -127,6 +127,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
       success: true,
       user,
       token,
+      expires: options.expires,
     });
   } catch (error) {
     res.status(500).json({
@@ -249,6 +250,7 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
       success: true,
       user,
       token,
+      expires: options.expires,
     });
   } catch (error) {
     res.status(500).json({
