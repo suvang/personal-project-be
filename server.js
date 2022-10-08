@@ -1,14 +1,16 @@
+const dotenv = require("dotenv");
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
 const morgan = require("morgan");
 const connectDB = require("./config/db");
 const colors = require("colors");
 const errorHandler = require("./middleware/error");
 const cookieParser = require("cookie-parser");
 
-//load env vars
-dotenv.config({ path: "./config/config.env" });
+dotenv.config({
+  path: path.resolve(`${__dirname}/config`, `${process.env.NODE_ENV}.env`),
+});
 
 //connect to database
 connectDB();
@@ -48,7 +50,7 @@ app.use("/api/v1/popular", popular);
 
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 const server = app.listen(
   PORT,

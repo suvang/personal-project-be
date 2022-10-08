@@ -129,7 +129,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     };
 
     const emailToken = jwt.sign(payload, "secret123", { expiresIn: "15m" });
-    const link = `http://localhost:3000/stories/popular?id=${user._id}&token=${emailToken}`;
+    const link = `${process.env.WEB_URL}/stories/popular?id=${user._id}&token=${emailToken}`;
 
     sendMail(user, link, "email");
 
@@ -165,7 +165,7 @@ exports.sendMailVerification = async (req, res) => {
     };
 
     const emailToken = jwt.sign(payload, "secret123", { expiresIn: "15m" });
-    const link = `http://localhost:3000/stories/popular?id=${user._id}&token=${emailToken}`;
+    const link = `${process.env.WEB_URL}/stories/popular?id=${user._id}&token=${emailToken}`;
 
     sendMail(user, link, "email");
 
@@ -331,7 +331,7 @@ exports.forgotPassword = async (req, res) => {
     };
 
     const token = jwt.sign(payload, "secret123", { expiresIn: "15m" });
-    const link = `http://localhost:3000/reset-password?id=${user._id}&token=${token}`;
+    const link = `${process.env.WEB_URL}/reset-password?id=${user._id}&token=${token}`;
 
     sendMail(user, link, "password");
 
