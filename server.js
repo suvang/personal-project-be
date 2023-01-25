@@ -29,6 +29,7 @@ const corsOptions = {
 
 const app = express();
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use("/uploads", express.static("uploads"));
 //Body parser
