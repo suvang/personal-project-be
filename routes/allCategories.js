@@ -13,7 +13,9 @@ const fs = require("fs");
 
 const storage = multer.diskStorage({
   destination: async function (req, file, cb) {
-    dir = `./uploads/categories/${req.body.topicName}`;
+    dir = `./uploads/categories/${
+      req.body.videoId ? req.body.videoId : req.body.topicName
+    }`;
     if (!fs.existsSync(dir)) {
       await fs.mkdirSync(dir);
       cb(null, dir);
@@ -56,6 +58,6 @@ router
   .post(isAuthenticated, type, addCategory)
   .put(updateCategory);
 
-router.route("/:id").get(getCategory).delete(isAuthenticated, deleteCategory);
+// router.route("/:name").get(getCategory).delete(isAuthenticated, deleteCategory);
 
 module.exports = router;

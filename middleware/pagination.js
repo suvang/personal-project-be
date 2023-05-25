@@ -135,6 +135,8 @@ exports.pagination = async (req, res, next, model, type = null) => {
     success: true,
     count: data.length,
     pagination: pagination,
+    totalPages: Math.ceil(total / limit),
+    currentPage: page,
     data,
   };
 };

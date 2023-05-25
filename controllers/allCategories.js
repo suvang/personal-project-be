@@ -4,6 +4,16 @@ const Category = require("../models/Allcategories");
 const fetchIdNumber = require("../middleware/fetchIdNumber");
 const User = require("../models/User");
 const { pagination } = require("../middleware/pagination");
+const { google } = require("googleapis");
+const { default: axios } = require("axios");
+const Tag = require("../models/Tag");
+
+//youtube config
+const apiKey = "AIzaSyAzDClJ05OqsIU-EsTZhaG6BoEaCjeojCM";
+const youtube = google.youtube({
+  version: "v3",
+  auth: apiKey,
+});
 
 //desc    get all categories
 //route   GET /api/v1/allcategories
@@ -33,7 +43,10 @@ exports.addCategory = asyncHandler(async (req, res, next) => {
     ),
     id: await fetchIdNumber(),
     image: req?.files[0]?.path,
-    totalChapters: requestBody.chapters.length,
+    blogUrl: `${new Date().toISOString().slice(0, 10).replace(/-/g, "")}/${
+      requestBody.blogUrl
+    }`,
+    // totalChapters: requestBody.chapters.length,
     owner: req.user._id,
   });
   let user = await User.findById(req.user._id);
@@ -42,34 +55,74 @@ exports.addCategory = asyncHandler(async (req, res, next) => {
     res.status(400).json({ success: false, data: "user not defined" });
   }
 
-  if (requestBody.categoryType === "audio") {
-    for (let i in requestBody.chapters) {
-      Object.assign(requestBody.chapters[i], { chapterAudioSrc: "" });
-    }
+  // if (requestBody.categoryType === "audio") {
+  //   for (let i in requestBody.chapters) {
+  //     Object.assign(requestBody.chapters[i], { chapterAudioSrc: "" });
+  //   }
 
+  //   for (let i in req.files) {
+  //     if (req.files[i].fieldname !== "image") {
+  //       const getFieldName = parseInt(req.files[i].fieldname);
+  //       requestBody.chapters[getFieldName - 1].chapterAudioSrc =
+  //         req.files[i].path;
+  //     }
+  //   }
+  // }
+
+  // if (requestBody.categoryType === "image") {
+  //   for (let i in requestBody.chapters) {
+  //     Object.assign(requestBody.chapters[i], { subImages: [], totalImages: 0 });
+  //   }
+
+  //   for (let i in req.files) {
+  //     if (req.files[i].fieldname !== "image") {
+  //       const getFieldName = parseInt(req.files[i].fieldname);
+  //       requestBody.chapters[getFieldName - 1].subImages.push(
+  //         req.files[i].path
+  //       );
+  //       requestBody.chapters[getFieldName - 1].totalImages++;
+  //     }
+  //   }
+  // }
+
+  if (requestBody.categoryType === "image") {
+    requestBody.descriptionImages = [];
     for (let i in req.files) {
-      if (req.files[i].fieldname !== "image") {
-        const getFieldName = parseInt(req.files[i].fieldname);
-        requestBody.chapters[getFieldName - 1].chapterAudioSrc =
-          req.files[i].path;
+      if (req.files[i].fieldname !== "coverImage") {
+        requestBody.descriptionImages.push(req.files[i].path);
       }
     }
   }
 
-  if (requestBody.categoryType === "image") {
-    for (let i in requestBody.chapters) {
-      Object.assign(requestBody.chapters[i], { subImages: [], totalImages: 0 });
-    }
+  if (requestBody.categoryType === "video") {
+    // send these properties from frontend in req.body.finalObj
+    // description;
+    // videoId: data.id;
+    // categoryType: "video";
+    // popular;
+    let { videoId } = JSON.parse(req.body.finalObj);
+
+    const videoContentDetails = await axios.get(
+      `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id=${videoId}&key=${apiKey}`
+    );
+
+    const descriptionImages = [];
 
     for (let i in req.files) {
-      if (req.files[i].fieldname !== "image") {
-        const getFieldName = parseInt(req.files[i].fieldname);
-        requestBody.chapters[getFieldName - 1].subImages.push(
-          req.files[i].path
-        );
-        requestBody.chapters[getFieldName - 1].totalImages++;
-      }
+      const getFieldName = parseInt(req.files[i].fieldname);
+      descriptionImages[getFieldName - 1] = req.files[i].path;
     }
+
+    const data = videoContentDetails.data.items[0];
+
+    requestBody.publishedAt = data.snippet.publishedAt;
+    requestBody.channelId = data.snippet.channelId;
+    requestBody.topicName = data.snippet.title;
+    requestBody.channelTitle = data.snippet.channelTitle;
+    requestBody.thumbnails = data.snippet.thumbnails;
+    requestBody.descriptionImages = descriptionImages;
+    requestBody.videoUrl = `https://www.youtube.com/embed/${requestBody.videoId}`;
+    requestBody.duration = data.contentDetails.duration;
   }
 
   let categoryItem = await Category.create(requestBody);
@@ -80,13 +133,22 @@ exports.addCategory = asyncHandler(async (req, res, next) => {
   }
 
   res.status(201).json({ success: true, data: categoryItem });
+
+  for (let i = 0; i < requestBody.tags.length; i++) {
+    const doesTagExist = await Tag.findOne({ name: requestBody.tags[i] });
+    if (!doesTagExist) {
+      await Tag.create({ name: requestBody.tags[i] });
+    }
+  }
 });
 
 //desc get single category
 //route GET /api/v1/allcategories/:id
 //access public
 exports.getCategory = asyncHandler(async (req, res, next) => {
-  const category = await Category.findById(req.params.id);
+  // req.params.id
+  console.log("req.params.name ", req.params.name);
+  const category = await Category.find({ topicName: req.params.name });
 
   if (!category) {
     return next(

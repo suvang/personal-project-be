@@ -22,6 +22,7 @@ const highlightStory = require("./routes/highlightStory");
 const savePost = require("./routes/savePost");
 const channelData = require("./routes/channelData");
 const popular = require("./routes/popular");
+const tags = require("./routes/tags");
 const corsOptions = {
   origin: true, //included origin as true
   credentials: true, //included credentials as true
@@ -48,7 +49,7 @@ app.use("/api/v1/highlightstory", highlightStory);
 app.use("/api/v1/savepost", savePost);
 app.use("/api/v1/channeldata", channelData);
 app.use("/api/v1/popular", popular);
-
+app.use("/api/v1/tags", tags);
 app.use(errorHandler);
 
 const PORT = process.env.PORT;

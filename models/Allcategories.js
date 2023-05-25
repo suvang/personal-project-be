@@ -26,9 +26,11 @@ const AllCategoriesSchema = new mongoose.Schema({
   uniqueTrackingNo: String,
   totalChapters: {
     type: Number,
-    required: true,
+    // required: true,
   },
-
+  headings: {
+    type: [String],
+  },
   tags: {
     type: [String],
     required: true,
@@ -36,6 +38,16 @@ const AllCategoriesSchema = new mongoose.Schema({
   saved: {
     type: Boolean,
     default: false,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  descriptionImages: {
+    type: [String],
+  },
+  blogUrl: {
+    type: String,
   },
   chapters: [
     {
@@ -50,6 +62,12 @@ const AllCategoriesSchema = new mongoose.Schema({
     },
   ],
   popular: Boolean,
+  videoId: String,
+  thumbnails: Object,
+  videoUrl: String,
+  duration: String,
+  publishedAt: String,
+  channelId: String,
   createdAt: {
     type: Date,
     default: Date.now,
@@ -61,5 +79,9 @@ const AllCategoriesSchema = new mongoose.Schema({
 //   this.slug = slugify(this.categoryType, { lower: true });
 //   next();
 // });
+
+AllCategoriesSchema.methods.generateId = function () {
+  return this._id;
+};
 
 module.exports = mongoose.model("AllCategories", AllCategoriesSchema);
