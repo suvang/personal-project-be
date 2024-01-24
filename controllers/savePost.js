@@ -10,6 +10,8 @@ exports.savePost = asyncHandler(async (req, res, next) => {
   const { postId, type } = req.query;
   let user = await User.findById(req.user._id);
 
+  console.log("user", user);
+
   try {
     const post = {
       id: postId,

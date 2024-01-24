@@ -23,6 +23,8 @@ const savePost = require("./routes/savePost");
 const channelData = require("./routes/channelData");
 const popular = require("./routes/popular");
 const tags = require("./routes/tags");
+const payment = require("./routes/payment");
+const course = require("./routes/course");
 const corsOptions = {
   origin: true, //included origin as true
   credentials: true, //included credentials as true
@@ -50,6 +52,8 @@ app.use("/api/v1/savepost", savePost);
 app.use("/api/v1/channeldata", channelData);
 app.use("/api/v1/popular", popular);
 app.use("/api/v1/tags", tags);
+app.use("/api/v1/payment", payment);
+app.use("/api/v1/course", course);
 app.use(errorHandler);
 
 const PORT = process.env.PORT;

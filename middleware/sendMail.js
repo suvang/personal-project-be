@@ -36,6 +36,7 @@ const sendMail = (user, link, type) => {
   // Step 3
   transporter.sendMail(mailOptions, (err, data) => {
     if (err) {
+      console.log("err", err);
       return log("Error occurs");
     }
     return log("Email sent!!!");

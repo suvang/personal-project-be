@@ -7,6 +7,8 @@ const getUserWithPosts = require("../middleware/getUserWithPosts");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../middleware/sendMail");
 
+let numberOfDays = 1 * 24 * 60 * 60 * 1000;
+
 //get all users
 exports.getAllUsers = asyncHandler(async (req, res, next) => {
   try {
@@ -40,7 +42,7 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      user: result,
+      data: result,
     });
   } catch (error) {
     res.json({ status: "error", error: "invalid token" });
@@ -96,12 +98,13 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
   }
 });
 
-//register user
-exports.registerUser = asyncHandler(async (req, res, next) => {
+async function addUser(req, res, next) {
   try {
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password, email_verified, tokenExpiresAt } =
+      req.body;
 
     let user = await User.findOne({ email });
+
     if (user) {
       return res
         .status(400)
@@ -112,14 +115,16 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
       fullName,
       email,
       password,
-      id: await fetchUserIdNumber(),
-      emailVerified: false,
+      emailVerified: email_verified ? true : false,
     });
 
     const token = await user.generateToken();
 
     const options = {
-      expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+      // expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+      expires: tokenExpiresAt
+        ? tokenExpiresAt
+        : new Date(Date.now() + numberOfDays),
       httpOnly: true,
     };
 
@@ -129,13 +134,13 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     };
 
     const emailToken = jwt.sign(payload, "secret123", { expiresIn: "15m" });
-    const link = `${process.env.WEB_URL}/stories/popular?id=${user._id}&token=${emailToken}`;
+    const link = `${process.env.WEB_URL}/profile?id=${user._id}&token=${emailToken}`;
 
     sendMail(user, link, "email");
 
     res.status(201).cookie("token", token, options).json({
       success: true,
-      user,
+      data: user,
       token,
       expires: options.expires,
     });
@@ -145,6 +150,11 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
       message: error.message,
     });
   }
+}
+
+//register user
+exports.registerUser = asyncHandler(async (req, res, next) => {
+  await addUser(req, res, next);
 });
 
 exports.sendMailVerification = async (req, res) => {
@@ -165,7 +175,7 @@ exports.sendMailVerification = async (req, res) => {
     };
 
     const emailToken = jwt.sign(payload, "secret123", { expiresIn: "15m" });
-    const link = `${process.env.WEB_URL}/stories/popular?id=${user._id}&token=${emailToken}`;
+    const link = `${process.env.WEB_URL}/explore?id=${user._id}&token=${emailToken}`;
 
     sendMail(user, link, "email");
 
@@ -185,7 +195,7 @@ exports.sendMailVerification = async (req, res) => {
 
 exports.verifyEmail = async (req, res) => {
   try {
-    const { id, token } = req.query;
+    const { id, token } = req.body;
 
     const user = await User.findById(id);
 
@@ -227,9 +237,46 @@ exports.verifyEmail = async (req, res) => {
 //login user
 exports.loginUser = asyncHandler(async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, tokenExpiry } = req.body;
+
+    if (tokenExpiry) req.body.tokenExpiresAt = new Date(tokenExpiry * 1000);
+
+    const { tokenExpiresAt } = req.body;
 
     const user = await User.findOne({ email }).select("+password");
+
+    if (
+      user &&
+      req.body.provider === "google" &&
+      req.body.secret === process.env.SECRET
+    ) {
+      const token = await user.generateToken();
+
+      const options = {
+        // expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+        expires: tokenExpiresAt
+          ? tokenExpiresAt
+          : new Date(Date.now() + numberOfDays),
+        httpOnly: false,
+        secure: true,
+        sameSite: "none",
+      };
+
+      return res.status(200).cookie("token", token, options).json({
+        success: true,
+        data: user,
+        token,
+        expires: options.expires,
+      });
+    }
+
+    if (
+      !user &&
+      req.body.provider === "google" &&
+      req.body.secret === process.env.SECRET
+    ) {
+      return await addUser(req, res, next);
+    }
 
     if (!user) {
       return res.status(400).json({
@@ -239,20 +286,36 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
       });
     }
 
-    const isMatch = await user.matchPassword(password);
+    // const isMatch = await user.matchPassword(password);
 
-    if (!isMatch) {
-      return res.status(400).json({
-        success: false,
-        message: "incorrect password",
-        userExist: true,
-      });
+    // if (!isMatch) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "incorrect password",
+    //     userExist: true,
+    //   });
+    // }
+
+    let isMatch;
+    if (req.body.provider !== "google") {
+      isMatch = await user.matchPassword(password);
+
+      if (!isMatch) {
+        return res.status(400).json({
+          success: false,
+          message: "incorrect password",
+          userExist: true,
+        });
+      }
     }
 
     const token = await user.generateToken();
 
     const options = {
-      expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+      // expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+      expires: tokenExpiresAt
+        ? tokenExpiresAt
+        : new Date(Date.now() + numberOfDays),
       httpOnly: false,
       secure: true,
       sameSite: "none",
@@ -260,7 +323,7 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
 
     res.status(200).cookie("token", token, options).json({
       success: true,
-      user,
+      data: user,
       token,
       expires: options.expires,
     });

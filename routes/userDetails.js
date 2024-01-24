@@ -33,7 +33,7 @@ router.route("/logout").get(logout);
 
 router.route("/forgot-password").post(forgotPassword);
 
-router.route("/verify-email").get(verifyEmail);
+router.route("/verify-email").put(verifyEmail);
 
 router.route("/reset-password").get(resetPassword).post(resetPassword);
 
