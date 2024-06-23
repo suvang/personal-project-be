@@ -7,6 +7,7 @@ const connectDB = require("./config/db");
 const colors = require("colors");
 const errorHandler = require("./middleware/error");
 const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 
 dotenv.config({
   path: path.resolve(`${__dirname}/config`, `${process.env.NODE_ENV}.env`),
@@ -37,6 +38,7 @@ app.options("*", cors(corsOptions));
 app.use("/uploads", express.static("uploads"));
 //Body parser
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 //dev logging middleware

@@ -1,0 +1,93 @@
+{
+  "courseName": "Build 16 Medium/Hard JavaScript Projects for Frontend Machine coding Interview rounds",
+  "url": "16-js-projects",
+  "price": 10,
+  "fullPrice": 20,
+  "discount": "50% OFF",
+  "tags": ["JavaScript"],
+  "thumbnail": "http://localhost:3000/_next/image?url=https%3A%2F%2Fxplodivity.graphy.com%2F_next%2Fimage%3Furl%3Dhttps%253A%252F%252Fd502jbuhuh9wk.cloudfront.net%252Fcourses%252F65883553e4b08ebe75f39885%252Fcover%252F2024-01-04T12%253A04%253A44.171Z.jpg%26w%3D1920%26q%3D75&w=1200&q=75",
+  "courseContent": [
+    {
+      "id": 1,
+      "videoName": "Nested comments Structure",
+      "thumbnail": "https://i.ytimg.com/vi/LB0-okRcdig/maxresdefault.jpg",
+      "sourceCode": "",
+      "videoUrl": "https://www.youtube.com/watch?v=LB0-okRcdig",
+      "duration": "12:43 mins"
+    },
+    {
+      "id": 2,
+      "videoName": "File Structure",
+      "thumbnail": "https://i.ytimg.com/vi/LB0-okRcdig/maxresdefault.jpg",
+      "sourceCode": "",
+      "videoUrl": "https://www.youtube.com/watch?v=LB0-okRcdig",
+      "duration": "14:21 mins"
+    },
+    {
+      "id": 3,
+      "videoName": "multiselect dropdown",
+      "thumbnail": "https://i.ytimg.com/vi/LB0-okRcdig/maxresdefault.jpg",
+      "sourceCode": "",
+      "videoUrl": "https://www.youtube.com/watch?v=LB0-okRcdig",
+      "duration": "10:16 mins"
+    },
+    {
+      "id": 4,
+      "videoName": "Star rating",
+      "thumbnail": "https://i.ytimg.com/vi/LB0-okRcdig/maxresdefault.jpg",
+      "sourceCode": "",
+      "videoUrl": "https://www.youtube.com/watch?v=LB0-okRcdig",
+      "duration": "11:52 mins"
+    },
+    {
+      "id": 5,
+      "videoName": "typewriter effect",
+      "thumbnail": "https://i.ytimg.com/vi/LB0-okRcdig/maxresdefault.jpg",
+      "sourceCode": "",
+      "videoUrl": "https://www.youtube.com/watch?v=LB0-okRcdig",
+      "duration": "07:39 mins"
+    },
+    {
+      "id": 6,
+      "videoName": "Toast notification",
+      "thumbnail": "https://i.ytimg.com/vi/LB0-okRcdig/maxresdefault.jpg",
+      "sourceCode": "",
+      "videoUrl": "https://www.youtube.com/watch?v=LB0-okRcdig",
+      "duration": "12:43 mins"
+    },
+    {
+      "id": 7,
+      "videoName": "Calendar picker",
+      "thumbnail": "https://i.ytimg.com/vi/LB0-okRcdig/maxresdefault.jpg",
+      "sourceCode": "",
+      "videoUrl": "https://www.youtube.com/watch?v=LB0-okRcdig",
+      "duration": "12:43 mins"
+    },
+    {
+      "id": 8,
+      "videoName": "Chessboard pattern",
+      "thumbnail": "https://i.ytimg.com/vi/LB0-okRcdig/maxresdefault.jpg",
+      "sourceCode": "",
+      "videoUrl": "https://www.youtube.com/watch?v=LB0-okRcdig",
+      "duration": "12:43 mins"
+    },
+    {
+      "id": 9,
+      "videoName": "multi level dropdown",
+      "thumbnail": "https://i.ytimg.com/vi/LB0-okRcdig/maxresdefault.jpg",
+      "sourceCode": "",
+      "videoUrl": "https://www.youtube.com/watch?v=LB0-okRcdig",
+      "duration": "12:43 mins"
+    },
+    {
+      "id": 10,
+      "videoName": "Nested comments Structure",
+      "thumbnail": "https://i.ytimg.com/vi/LB0-okRcdig/maxresdefault.jpg",
+      "sourceCode": "",
+      "videoUrl": "https://www.youtube.com/watch?v=LB0-okRcdig",
+      "duration": "12:43 mins"
+    }
+  ],
+  "topDescription": "",
+  "bottomDescription": ""
+}

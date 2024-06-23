@@ -6,6 +6,7 @@ const Category = require("../models/Allcategories");
 const getUserWithPosts = require("../middleware/getUserWithPosts");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../middleware/sendMail");
+const Payment = require("../models/Payment");
 
 let numberOfDays = 1 * 24 * 60 * 60 * 1000;
 
@@ -39,6 +40,11 @@ exports.getUser = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.user._id);
 
     const result = await getUserWithPosts(user);
+
+    // Lookup payments for the user
+    const payments = await Payment.find({ userId: user._id });
+
+    result.payments = payments;
 
     res.status(200).json({
       success: true,
@@ -111,12 +117,22 @@ async function addUser(req, res, next) {
         .json({ success: false, message: "User already exists" });
     }
 
-    user = await User.create({
-      fullName,
-      email,
-      password,
-      emailVerified: email_verified ? true : false,
-    });
+    if (req.body.provider === "google") {
+      user = await User.create({
+        fullName,
+        email,
+        emailVerified: email_verified ? true : false,
+      });
+    } else {
+      user = await User.create({
+        fullName,
+        email,
+        password,
+        emailVerified: email_verified ? true : false,
+      });
+    }
+
+    console.log("in here", req.body);
 
     const token = await user.generateToken();
 
