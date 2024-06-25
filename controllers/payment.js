@@ -58,6 +58,7 @@ exports.paymentVerification = asyncHandler(async (req, res, next) => {
   );
 
   if (isAuthentic) {
+    let user = await User.findById(req.user._id);
     await Payment.create({
       email,
       userId,
@@ -68,6 +69,8 @@ exports.paymentVerification = asyncHandler(async (req, res, next) => {
         razorpay_signature,
       },
     });
+    user.purchasedCourses.push(courseId);
+    await user.save();
 
     res.status(200).json({
       success: true,

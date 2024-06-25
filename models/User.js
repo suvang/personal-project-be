@@ -37,6 +37,7 @@ const UserSchema = new mongoose.Schema({
   },
   resetPasswordLink: String,
   emailVerified: { type: Boolean, default: false },
+  purchasedCourses: [{ courseId: mongoose.Schema.Types.ObjectId }],
   // resetPasswordToken: String,
   // resetPasswordExpire: Date,
   createdAt: {
