@@ -7,6 +7,7 @@ const Razorpay = require("razorpay");
 const {
   validatePaymentVerification,
 } = require("../node_modules/razorpay/dist/utils/razorpay-utils");
+const sendMail = require("../middleware/sendMail");
 
 //desc    adds a highlighted story id to the user
 //route   POST /api/v1/addHighlightedStory
@@ -71,6 +72,13 @@ exports.paymentVerification = asyncHandler(async (req, res, next) => {
     });
     user.purchasedCourses.push(courseId);
     await user.save();
+
+    const content = {
+      subjectText: "Course purchase",
+      message: `Congratulations, you have successfully purchased the course.`,
+    };
+
+    sendMail(user, content);
 
     res.status(200).json({
       success: true,

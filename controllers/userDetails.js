@@ -152,7 +152,12 @@ async function addUser(req, res, next) {
     const emailToken = jwt.sign(payload, "secret123", { expiresIn: "15m" });
     const link = `${process.env.WEB_URL}/profile?id=${user._id}&token=${emailToken}`;
 
-    sendMail(user, link, "email");
+    const content = {
+      subjectText: "Verify email",
+      message: `Click on the link to verify your account on xplodivity: ${link}`,
+    };
+
+    sendMail(user, content);
 
     res.status(201).cookie("token", token, options).json({
       success: true,
@@ -193,7 +198,12 @@ exports.sendMailVerification = async (req, res) => {
     const emailToken = jwt.sign(payload, "secret123", { expiresIn: "15m" });
     const link = `${process.env.WEB_URL}/explore?id=${user._id}&token=${emailToken}`;
 
-    sendMail(user, link, "email");
+    const content = {
+      subjectText: "Verify email",
+      message: `Click on the link to verify your account on xplodivity: ${link}`,
+    };
+
+    sendMail(user, content);
 
     res.status(200).json({
       success: true,
@@ -414,7 +424,12 @@ exports.forgotPassword = async (req, res) => {
     const token = jwt.sign(payload, "secret123", { expiresIn: "15m" });
     const link = `${process.env.WEB_URL}/reset-password?id=${user._id}&token=${token}`;
 
-    sendMail(user, link, "password");
+    const content = {
+      subjectText: "Reset password",
+      message: `Click on the link to reset your password: ${link}`,
+    };
+
+    sendMail(user, content);
 
     user.resetPasswordLink = link;
     user.save();
