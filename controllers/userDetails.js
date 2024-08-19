@@ -41,6 +41,23 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 
     const result = await getUserWithPosts(user);
 
+    const currentDate = new Date();
+    let validCourses = [];
+
+    for (let i = 0; i < user.purchasedCourses.length; i++) {
+      if (new Date(user.purchasedCourses[i].expiresAt) > currentDate) {
+        validCourses.push(user.purchasedCourses[i]);
+      } else {
+        await Payment.remove({
+          userId: user._id,
+          courseId: user.purchasedCourses[i].courseId,
+        });
+      }
+    }
+    user.purchasedCourses = validCourses;
+
+    await user.save();
+
     // Lookup payments for the user
     const payments = await Payment.find({ userId: user._id });
 

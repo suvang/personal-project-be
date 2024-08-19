@@ -4,8 +4,6 @@ exports.pagination = async (req, res, next, model, type = null) => {
   //copy req.query
   const reqQuery = { ...req.query };
 
-  console.log();
-
   //fields to exclude
   const removeFields = ["select", "sort", "page", "limit"];
 
@@ -16,10 +14,10 @@ exports.pagination = async (req, res, next, model, type = null) => {
   let queryStr = JSON.stringify(reqQuery);
 
   //create operators ($gt, $gte, etc)
-  queryStr = queryStr.replace(
-    /\b(gt|gte|lt|lte|in)\b/g,
-    (match) => `$${match}`
-  );
+  // queryStr = queryStr.replace(
+  //   /\b(gt|gte|lt|lte|in)\b/g,
+  //   (match) => `$${match}`
+  // );
 
   let tempQuery = { ...JSON.parse(queryStr) };
 
@@ -113,6 +111,8 @@ exports.pagination = async (req, res, next, model, type = null) => {
 
   //executing query
   const data = await query;
+
+  // console.log("data", data);
 
   //pagination result
   const pagination = {};

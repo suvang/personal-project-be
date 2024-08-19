@@ -59,18 +59,30 @@ exports.paymentVerification = asyncHandler(async (req, res, next) => {
   );
 
   if (isAuthentic) {
+    const purchaseDate = new Date();
+
+    let courseDetails = {
+      courseId,
+      purchaseDate: purchaseDate,
+      expiresAt: new Date(purchaseDate).setFullYear(
+        new Date(purchaseDate).getFullYear() + 1
+      ),
+    };
+
     let user = await User.findById(req.user._id);
     await Payment.create({
       email,
       userId,
       courseId,
+      courseDetails,
       paymentInfo: {
         razorpay_order_id,
         razorpay_payment_id,
         razorpay_signature,
       },
     });
-    user.purchasedCourses.push(courseId);
+
+    user.purchasedCourses.push(courseDetails);
     await user.save();
 
     const content = {
