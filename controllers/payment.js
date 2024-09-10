@@ -50,6 +50,8 @@ exports.paymentVerification = asyncHandler(async (req, res, next) => {
     userId,
     courseId,
     orderId,
+    courseName,
+    courseUrl,
   } = req.body;
 
   const isAuthentic = validatePaymentVerification(
@@ -85,9 +87,12 @@ exports.paymentVerification = asyncHandler(async (req, res, next) => {
     user.purchasedCourses.push(courseDetails);
     await user.save();
 
+    console.log("courseDetails", courseDetails);
+    console.log("user", user);
+
     const content = {
-      subjectText: "Course purchase",
-      message: `Congratulations, you have successfully purchased the course.`,
+      subjectText: "Confirmation of Your Course Purchase – Welcome Aboard!",
+      message: `Dear ${user?.fullName},\n\nThank you for purchasing ${courseName}! We're thrilled to have you on board and excited for you to start your learning journey with us.\n\nYou can now access the course through your account at ${courseUrl}. If you have any questions or need assistance, feel free to reach out.\n\nHappy learning!\n\nBest regards,\nXplodivity`,
     };
 
     sendMail(user, content);
