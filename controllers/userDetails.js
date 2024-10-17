@@ -166,7 +166,9 @@ async function addUser(req, res, next) {
       id: user._id,
     };
 
-    const emailToken = jwt.sign(payload, "secret123", { expiresIn: "15m" });
+    const emailToken = jwt.sign(payload, process.env.SECRET, {
+      expiresIn: "15m",
+    });
     const link = `${process.env.WEB_URL}/profile?id=${user._id}&token=${emailToken}`;
 
     const content = {
@@ -212,7 +214,9 @@ exports.sendMailVerification = async (req, res) => {
       id: user._id,
     };
 
-    const emailToken = jwt.sign(payload, "secret123", { expiresIn: "15m" });
+    const emailToken = jwt.sign(payload, process.env.SECRET, {
+      expiresIn: "15m",
+    });
     const link = `${process.env.WEB_URL}/explore?id=${user._id}&token=${emailToken}`;
 
     const content = {
@@ -258,7 +262,7 @@ exports.verifyEmail = async (req, res) => {
       });
     }
 
-    jwt.verify(token, "secret123");
+    jwt.verify(token, process.env.SECRET);
 
     user.emailVerified = true;
     await user.save();
@@ -438,7 +442,7 @@ exports.forgotPassword = async (req, res) => {
       id: user._id,
     };
 
-    const token = jwt.sign(payload, "secret123", { expiresIn: "15m" });
+    const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "15m" });
     const link = `${process.env.WEB_URL}/reset-password?id=${user._id}&token=${token}`;
 
     const content = {
@@ -488,7 +492,7 @@ exports.resetPassword = async (req, res) => {
       return;
     }
 
-    jwt.verify(token, "secret123");
+    jwt.verify(token, process.env.SECRET);
 
     if (password) {
       user.password = password;

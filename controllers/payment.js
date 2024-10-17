@@ -16,13 +16,13 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
   console.log("req.body", req.body);
 
   const instance = new Razorpay({
-    key_id: "rzp_test_HwwK3yQRnEOlhI",
-    key_secret: "TqCi3i52A4a7cfItRmo4fRrn",
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
   });
 
   instance.orders.create(
     {
-      amount: 50000,
+      amount: req.body.amount,
       currency: "INR",
       receipt: "receipt#1",
       notes: {
@@ -86,9 +86,6 @@ exports.paymentVerification = asyncHandler(async (req, res, next) => {
 
     user.purchasedCourses.push(courseDetails);
     await user.save();
-
-    console.log("courseDetails", courseDetails);
-    console.log("user", user);
 
     const content = {
       subjectText: "Confirmation of Your Course Purchase – Welcome Aboard!",
