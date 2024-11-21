@@ -10,7 +10,3 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
-
-//mongodb username/pass
-//username-xplodivity
-//pass- samal333
