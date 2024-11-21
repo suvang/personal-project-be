@@ -1,2 +1,5 @@
 node_modules
 uploads
+
+./config/development.env
+./config/production.env
