@@ -4,7 +4,7 @@
   "description": "personal project backend api",
   "main": "server.js",
   "scripts": {
-    "start": "NODE_ENV=production && node server",
+    "start": "export NODE_ENV=production && nodemon server",
     "dev": "export NODE_ENV=development && nodemon server"
   },
   "author": "Suvang Samal",
