@@ -18,6 +18,7 @@ const sendMail = (user, content) => {
     to: `${user.email}`, // TODO: email receiver
     subject: content.subjectText,
     text: content.message,
+    html: content.html,
   };
 
   // Step 3

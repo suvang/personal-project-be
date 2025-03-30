@@ -520,3 +520,69 @@ exports.resetPassword = async (req, res) => {
     });
   }
 };
+
+exports.sendBulkEmail = async (req, res) => {
+  try {
+    const users = await User.find({}, { _id: 0, email: 1 });
+    const emailList = users.map((user) => user.email);
+
+    // Create a mock user object for each email
+    for (const email of emailList) {
+      const mockUser = {
+        email: email,
+      };
+
+      const content = {
+        subjectText:
+          "🎉 Ace Frontend Live Coding Rounds! 50% Off for a Limited Time 🎯",
+        html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <p>Hey <strong>${email.split("@")[0]}</strong>,</p>
+  
+          <p>Holi is here, and so is an awesome <strong>50% discount</strong> on our JavaScript projects course! 🎉</p>
+  
+          <p>If you're preparing for frontend interviews, this course—<strong>"Build 16 Medium/Hard JavaScript Projects for Frontend Machine Coding Interview Rounds"</strong>—will give you the <strong>real-world coding experience</strong> you need to stand out.</p>
+  
+          <h3 style="color: #007bff;">🚀 What’s inside?</h3>
+          <ul>
+            <li>✅ 16 challenging projects to boost your JS skills</li>
+            <li>✅ Full video explanations of building each project from scratch</li>
+            <li>✅ 10+ hours of premium content</li>
+            <li>✅ Step-by-step explanations and code walkthroughs.</li>
+            <li>✅ Should prepare you for any JavaScript live coding interview round.</li>
+            <li>✅ No bullshit, No time waste</li>
+          </ul>
+  
+          <p><strong>And the best part? For a limited time, you can grab it for just ₹449! (instead of ₹899) 🎯</strong></p>
+  
+          <p>But hurry – <strong>this special Holi discount won’t last long!</strong></p>
+  
+          <p style="text-align: center;">
+            <a href="https://xplodivity.com/courses/16-js-projects" style="background-color: #28a745; color: #fff; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 5px; display: inline-block;">
+              👉 Claim Your 50% Discount Now
+            </a>
+          </p>
+  
+          <p>Wishing you a colorful and skill-packed Holi! 🎨💡</p>
+  
+          <p>Happy coding,</p>
+          <p><strong>xplodivity</strong><br><a href="https://xplodivity.com" style="color: #007bff;">xplodivity.com</a></p>
+        </div>
+      `,
+      };
+
+      await sendMail(mockUser, content);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Bulk emails sent successfully",
+      emailsSentTo: emailList,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

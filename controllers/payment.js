@@ -57,7 +57,7 @@ exports.paymentVerification = asyncHandler(async (req, res, next) => {
   const isAuthentic = validatePaymentVerification(
     { order_id: orderId, payment_id: razorpay_payment_id },
     razorpay_signature,
-    "TqCi3i52A4a7cfItRmo4fRrn"
+    process.env.RAZORPAY_KEY_SECRET
   );
 
   if (isAuthentic) {

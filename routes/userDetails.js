@@ -11,6 +11,7 @@ const {
   resetPassword,
   verifyEmail,
   sendMailVerification,
+  sendBulkEmail,
 } = require("../controllers/userDetails");
 const router = express.Router();
 const multer = require("multer");
@@ -19,7 +20,7 @@ const upload = multer();
 
 const type = upload.none();
 
-router.route("/getallusers").get(getAllUsers);
+router.route("/getallusers").get(isAuthenticated, getAllUsers);
 
 router.route("/currentuser").get(isAuthenticated, getUser);
 
@@ -40,6 +41,8 @@ router.route("/reset-password").get(resetPassword).post(resetPassword);
 router
   .route("/resend-email-verification")
   .get(isAuthenticated, sendMailVerification);
+
+router.route("/send-bulk-email").get(sendBulkEmail);
 
 router.route("/deleteprofile").delete(isAuthenticated, deleteMyProfile);
 
