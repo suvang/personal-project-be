@@ -45,6 +45,28 @@ const UserSchema = new mongoose.Schema({
         default: Date.now,
       },
       expiresAt: Date,
+      pricePack: {
+        accessYears: {
+          type: Number,
+          required: true,
+        },
+        accessYearsText: {
+          type: String,
+          required: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
+        fullPrice: {
+          type: Number,
+          required: true,
+        },
+        discount: {
+          type: String,
+          required: true,
+        },
+      },
     },
   ],
   // resetPasswordToken: String,

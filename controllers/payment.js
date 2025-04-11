@@ -52,6 +52,7 @@ exports.paymentVerification = asyncHandler(async (req, res, next) => {
     orderId,
     courseName,
     courseUrl,
+    pricePack,
   } = req.body;
 
   const isAuthentic = validatePaymentVerification(
@@ -67,8 +68,9 @@ exports.paymentVerification = asyncHandler(async (req, res, next) => {
       courseId,
       purchaseDate: purchaseDate,
       expiresAt: new Date(purchaseDate).setFullYear(
-        new Date(purchaseDate).getFullYear() + 1
+        new Date(purchaseDate).getFullYear() + pricePack?.accessYears
       ),
+      pricePack,
     };
 
     let user = await User.findById(req.user._id);
