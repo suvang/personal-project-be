@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const PricePackSchema = require("../sharedSchemas/pricePack");
 
 const CourseSchema = new mongoose.Schema({
   courseName: String,
@@ -12,30 +13,7 @@ const CourseSchema = new mongoose.Schema({
   thumbnail: {
     type: String,
   },
-  pricePacks: [
-    {
-      accessYears: {
-        type: Number,
-        required: true,
-      },
-      accessYearsText: {
-        type: String,
-        required: true,
-      },
-      price: {
-        type: Number,
-        required: true,
-      },
-      fullPrice: {
-        type: Number,
-        required: true,
-      },
-      discount: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
+  pricePacks: [PricePackSchema],
   courseContent: [
     {
       id: Number,

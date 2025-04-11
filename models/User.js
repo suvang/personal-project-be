@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const PricePackSchema = require("../sharedSchemas/pricePack");
 
 const UserSchema = new mongoose.Schema({
   id: Number,
@@ -45,28 +46,7 @@ const UserSchema = new mongoose.Schema({
         default: Date.now,
       },
       expiresAt: Date,
-      pricePack: {
-        accessYears: {
-          type: Number,
-          required: true,
-        },
-        accessYearsText: {
-          type: String,
-          required: true,
-        },
-        price: {
-          type: Number,
-          required: true,
-        },
-        fullPrice: {
-          type: Number,
-          required: true,
-        },
-        discount: {
-          type: String,
-          required: true,
-        },
-      },
+      pricePack: PricePackSchema,
     },
   ],
   // resetPasswordToken: String,
